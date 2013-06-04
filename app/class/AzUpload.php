@@ -16,6 +16,16 @@ class AzUpload {
             $this->processDownloadFile($_GET['dl']);
         }
         else {
+            $fm = new FileManager();
+            $files = $fm->getFileList(10);
+            $histories = array();
+            foreach ($files as $file) {
+                $histories[] = array(
+                    'url' => $this->buildDownloadUrl($file),
+                    'file' => $file
+                );
+            }
+            $this->view->histories = $histories;
             $this->view->render('upload.tpl');
         }
     }
@@ -35,7 +45,7 @@ class AzUpload {
             $fm = new FileManager();
             $saveName = $fm->saveFile($_FILES["file"]);
             $this->view->fileSize = ($_FILES["file"]["size"] / 1024);
-            $this->view->downloadURL = 'http://' . $_SERVER['SERVER_NAME'] . "/?dl=$saveName";
+            $this->view->downloadURL = $this->buildDownloadUrl($saveName);
             $this->view->render('success.tpl');
         }
     }
@@ -50,6 +60,10 @@ class AzUpload {
         header('Content-type: application/octet-stream; charset=utf-8');
         header("Content-Disposition: attachment; filename=\"$name\"");
         $fm->getFilecontent($saveName);
+    }
+    
+    private function buildDownloadUrl($file) {
+        return 'http://' . $_SERVER['SERVER_NAME'] . "/?dl=$file";
     }
 }
 
@@ -70,6 +84,26 @@ class FileManager {
         file_put_contents(FILE_STORE . "$saveName.name.txt", $_FILES["file"]["name"]);
         
         return $saveName;
+    }
+    
+    public function getFileList($limit = null) {
+        $files = array();
+        $count = 0;
+        if ($handle = opendir(FILE_STORE)) {
+            $file = readdir($handle);
+            while ($file) {
+                if ($file != "." && $file != ".." && !strstr($file, '.txt') ) {
+                    $files[] = $file;
+                    $count++;
+                    if ($count >= $limit) {
+                        break;
+                    }
+                }
+                $file = readdir($handle);
+            }
+            closedir($handle);
+        }
+        return $files;
     }
     
     public function isFileExists($saveName) {

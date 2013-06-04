@@ -9,10 +9,10 @@ class AzUpload {
     public function __destruct() {}
     
     public function handleRequest() {
-        if ('upload' == $_GET['act']) {
+        if (isset($_GET['act']) && 'upload' == $_GET['act']) {
             $this->processUploadFile();
         }
-        elseif (!empty($_GET['dl'])) {
+        elseif (isset($_GET['dl']) && !empty($_GET['dl'])) {
             $this->processDownloadFile($_GET['dl']);
         }
         else {
@@ -89,20 +89,18 @@ class FileManager {
     public function getFileList($limit = null) {
         $files = array();
         $count = 0;
-        if ($handle = opendir(FILE_STORE)) {
-            $file = readdir($handle);
-            while ($file) {
-                if ($file != "." && $file != ".." && !strstr($file, '.txt') ) {
-                    $files[] = $file;
-                    $count++;
-                    if ($count >= $limit) {
-                        break;
-                    }
+        
+        $all_files = scandir(FILE_STORE, SCANDIR_SORT_DESCENDING);
+        foreach ($all_files as $file) {
+            if ($file != "." && $file != ".." && !strstr($file, '.txt') ) {
+                $files[] = $file;
+                $count++;
+                if ($count >= $limit) {
+                    break;
                 }
-                $file = readdir($handle);
             }
-            closedir($handle);
         }
+        
         return $files;
     }
     

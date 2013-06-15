@@ -12,6 +12,9 @@ class AzUpload {
         if (isset($_GET['act']) && 'upload' == $_GET['act']) {
             $this->processUploadFile();
         }
+    	if (isset($_GET['act']) && 'ajaxupload' == $_GET['act']) {
+            $this->processUploadFile(true);
+        }
         elseif (isset($_GET['dl']) && !empty($_GET['dl'])) {
             $this->processDownloadFile($_GET['dl']);
         }
@@ -26,11 +29,11 @@ class AzUpload {
                 );
             }
             $this->view->histories = $histories;
-            $this->view->render('upload.tpl');
+            $this->view->render('main.tpl');
         }
     }
     
-    private function processUploadFile() {
+    private function processUploadFile($ajax = false) {
         if (empty($_FILES['file']['name'])) {
             $this->view->render('upload.tpl');
             return false;
@@ -40,13 +43,22 @@ class AzUpload {
             // TODO: turn this into view
             echo "Error: " . $_FILES["file"]["error"] . "<br>";
         }
-        else
-        {
+        else {
             $fm = new FileManager();
             $saveName = $fm->saveFile($_FILES["file"]);
-            $this->view->fileSize = ($_FILES["file"]["size"] / 1024);
-            $this->view->downloadURL = $this->buildDownloadUrl($saveName);
-            $this->view->render('success.tpl');
+            if ($ajax) {
+	            $data = array(
+	            	'uploadedSize' => $_FILES["file"]["size"],
+	            	'downloadUrl' => $this->buildDownloadUrl($saveName),
+	            	'downloadName' => $saveName
+	            );
+	            echo json_encode($data);
+            }
+            else {
+            	$this->view->fileSize = ($_FILES["file"]["size"] / 1024);
+	            $this->view->downloadURL = $this->buildDownloadUrl($saveName);
+	            $this->view->render('success.tpl');
+            }
         }
     }
     

@@ -34,6 +34,7 @@
 	<script src="js/bootstrap.file-input.js"></script>
 	<script>
 	var initUploadComponent = function() {
+
 		function humanSize(bytes) {
 			const K = 1024;
 			const M = K * 1024;
@@ -90,23 +91,34 @@
 				;
 			document.querySelector('#history_list').innerHTML = list;
 		}
-		
+
+		var xReq;
 		function handleStartUpload(e) {
 			e.preventDefault();
 			if (document.querySelector('#file_input').files.length <= 0) {
 				return;
 			}
 			
-			var xReq = new XMLHttpRequest();
+			updateProgressBar(0, 1);
+			
+			xReq = new XMLHttpRequest();
 			xReq.upload.addEventListener('progress', handleProgressInfo, false)
 			xReq.addEventListener('load', handleUploadedInfo, false);
 
 			upload_form = document.querySelector('#upload_form');
 			xReq.open("post", upload_form.action, true);
 			xReq.send(new FormData(upload_form));
+			
 			$('#uploadModal').modal('show');
 		}
 		document.querySelector('#submit').addEventListener('click', handleStartUpload, false);
+
+		function handleCancelUpload(e) {
+			if (xReq) {
+				xReq.abort();
+			}
+		}
+		document.querySelector('#cancel_upload_btn').addEventListener('click', handleCancelUpload, false);
 	}
 	window.addEventListener('load', initUploadComponent, false);
 	</script>
@@ -148,9 +160,10 @@
         </p>
     </footer>
     <!-- 上傳Modal -->
-    <div id="uploadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="uploadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+    	data-backdrop="static" data-keyboard="false">
     	<div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button id="cancel_upload_btn" type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h4 id="myModalLabel">上傳中...</h4>
         </div>
         <!--loading bar-->

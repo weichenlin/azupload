@@ -117,7 +117,7 @@
 			xReq.addEventListener('load', handleUploadedInfo, false);
 
 			upload_form = document.querySelector('#upload_form');
-			xReq.open("post", upload_form.action, true);
+			xReq.open("post", upload_form.action + "&ajax=true" , true);
 			xReq.send(new FormData(upload_form));
 			
 			$('#uploadModal').modal('show');
@@ -139,7 +139,7 @@
 <div id="container">
 	<header class="text-center"><h1>upload.aznc.cc</h1></header>
 	<div class="upload-form">
-		<form id="upload_form" enctype="multipart/form-data" method="post" action="/?act=ajaxupload">
+		<form id="upload_form" enctype="multipart/form-data" method="post" action="/?act=upload">
 			<fieldset>
 				<label><h4>上傳檔案</h4></label>
 				<input id="file_input" name="file" type="file">

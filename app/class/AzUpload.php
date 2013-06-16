@@ -10,10 +10,8 @@ class AzUpload {
     
     public function handleRequest() {
         if (isset($_GET['act']) && 'upload' == $_GET['act']) {
-            $this->processUploadFile();
-        }
-    	if (isset($_GET['act']) && 'ajaxupload' == $_GET['act']) {
-            $this->processUploadFile(true);
+        	$ajax = (isset($_GET['ajax']) && 'true' == $_GET['ajax']) ? true : false;
+            $this->processUploadFile($ajax);
         }
         elseif (isset($_GET['dl']) && !empty($_GET['dl'])) {
             $this->processDownloadFile($_GET['dl']);

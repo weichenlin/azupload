@@ -67,6 +67,9 @@ class AzUpload {
             return;
         }
         $name = $fm->getFileName($saveName);
+        if ( preg_match("/MSIE/", $_SERVER["HTTP_USER_AGENT"]) ) {
+        	$name = urlencode($name);
+        }
         header('Content-type: application/octet-stream; charset=utf-8');
         header("Content-Disposition: attachment; filename=\"$name\"");
         $fm->getFilecontent($saveName);

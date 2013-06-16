@@ -20,13 +20,24 @@
 		.history {
 			padding: 0 0 0 20px;
 		}
-		.form-shadow {
-		background: #FFFFFF;
-	    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		.upload-form {
+			border: 1px solid #DDD;
+			border-radius: 4px 4px 4px 4px;
+			background: #FFFFFF;
+		    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			padding: 8px;
+		}
+		.upload-btn {
+			display: block;
+			margin: 20px 0 0 0;
 		}
 		.up-success {
 			color: #333;
 			padding-left: 0;
+		}
+		#submit {
+			width: 100%;
+			margin: 10px 0 0 0;
 		}
 	</style>
 	<script src="js/jquery-2.0.2.min.js"></script>
@@ -127,38 +138,31 @@
 <body>
 <div id="container">
 	<header class="text-center"><h1>upload.aznc.cc</h1></header>
-    <table class="table table-bordered form-shadow">
-    	<tr>
-        	<td>
-            	<form id="upload_form" enctype="multipart/form-data" method="post" action="/?act=ajaxupload">
-                	<fieldset>
-                    	<label><h4>上傳檔案</h4></label>
-                    	<input id="file_input" name="file" type="file">
-                    	<input id="submit" class="btn btn-primary btn-small" type="submit" value="upload!">
-                    </fieldset>
-                </form>
-            </td>
-        </tr>
-        <tr>
-        	<td>
-            	<h4>歷史紀錄</h4>
-                <ul id="history_list" class="unstyled">
+	<div class="upload-form">
+		<form id="upload_form" enctype="multipart/form-data" method="post" action="/?act=ajaxupload">
+			<fieldset>
+				<label><h4>上傳檔案</h4></label>
+				<input id="file_input" name="file" type="file">
+				<input id="submit" class="btn btn-primary btn-small" type="submit" value="upload now!">
+			</fieldset>
+		</form>
+		<hr>
+		<h4>歷史紀錄</h4>
+		<ul id="history_list" class="unstyled">
 <?php foreach($this->histories as $data): ?>
-					<li><span class="icon-download"><a class="history" href="<?=$data[ 'url' ]?>"><?=$data[ 'file' ]?></a></span></li>
+			<li><span class="icon-download"><a class="history" href="<?=$data[ 'url' ]?>"><?=$data[ 'file' ]?></a></span></li>
 <?php endforeach; ?>
-                </ul>
-            </td>
-        </tr>
-    </table>
-    <footer class="text-center">
-    	<p class="muted">
+		</ul>
+	</div>
+	<footer class="text-center">
+		<p class="muted">
         	<small>
         		icon by <a href="http://glyphicons.com/" target="_blank">Glyphicons</a>
         		program by <a href="http://cfarm.blog.aznc.cc/" target="_blank">C瓜</a>
         		visual by <a href="http://azzurro.blog.aznc.cc/" target="_blank">AZZURRO</a>
-        	</small>
-        </p>
-    </footer>
+			</small>
+		</p>
+	</footer>
     <!-- 上傳Modal -->
     <div id="uploadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
     	data-backdrop="static" data-keyboard="false">

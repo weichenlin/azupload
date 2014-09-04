@@ -70,8 +70,11 @@ class AzUpload {
         if ( preg_match("/MSIE/", $_SERVER["HTTP_USER_AGENT"]) ) {
         	$name = urlencode($name);
         }
+        
+        $size = $fm->getFileSize($saveName);
         header('Content-type: application/octet-stream; charset=utf-8');
         header("Content-Disposition: attachment; filename=\"$name\"");
+        header("Content-Length: $size");
         $fm->getFilecontent($saveName);
     }
     
@@ -129,6 +132,10 @@ class FileManager {
     public function getFilecontent($saveName) {
         $file = FILE_STORE . $saveName;
         readfile($file);
+    }
+    
+    public function getFileSize($saveName) {
+        return filesize(FILE_STORE . $saveName);
     }
     
     private function getSaveName() {

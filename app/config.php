@@ -1,3 +1,4 @@
 <?php
 
-define('FILE_STORE', APP_ROOT . '../files/');
+define('FILE_STORE', '../files/');
+define('DB_STORE', '../db/');

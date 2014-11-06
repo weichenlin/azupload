@@ -216,7 +216,7 @@ class FileData
     {
         static $sth = null;
         if (!$sth) {
-            $sth = $this->pdo->prepare("SELECT savename FROM files ORDER BY id LIMIT :limit;");
+            $sth = $this->pdo->prepare("SELECT savename FROM files ORDER BY id DESC LIMIT :limit;");
         }
         $sth->execute(array(':limit' => $limit));
         $datas = $sth->fetchAll(PDO::FETCH_ASSOC);

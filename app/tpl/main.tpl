@@ -7,131 +7,154 @@
 	<title>upload.aznc.cc</title>
 	<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 	<style>
-		body {
-			background: #F7F7F7;
-		}
-		#container {
-			margin: 0 auto;
-			max-width: 330px;
-		}
-		header {
-			padding: 0 0 15px 0;
-		}
-		.history {
-			padding: 0 0 0 20px;
-		}
-		.upload-form {
-			border: 1px solid #DDD;
-			border-radius: 4px 4px 4px 4px;
-			background: #FFFFFF;
-		    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-			padding: 8px;
-		}
-		.upload-btn {
-			display: block;
-			margin: 20px 0 0 0;
-		}
-		.up-success {
-			color: #333;
-			padding-left: 0;
-		}
-		#submit {
-			width: 100%;
-			margin: 10px 0 0 0;
-		}
+            body {
+                background: #F7F7F7;
+            }
+            #container {
+                margin: 0 auto;
+                max-width: 330px;
+            }
+            header {
+                padding: 0 0 15px 0;
+            }
+            .history {
+                padding: 0 0 0 20px;
+            }
+            .upload-form {
+                border: 1px solid #DDD;
+                border-radius: 4px 4px 4px 4px;
+                background: #FFFFFF;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                padding: 8px;
+            }
+            .upload-btn {
+                display: block;
+                margin: 20px 0 0 0;
+            }
+            .up-success {
+                color: #333;
+                padding-left: 0;
+            }
+            #submit {
+                width: 100%;
+                margin: 10px 0 0 0;
+            }
 	</style>
 	<script src="js/jquery-2.0.2.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/bootstrap.file-input.js"></script>
+        <script src="js/js.cookie.js"></script>
 	<script>
-	var initUploadComponent = function() {
+            var initUploadComponent = function() {
 
-		function humanSize(bytes) {
-			const K = 1024;
-			const M = K * 1024;
-			const G = M * 1024;
-			const T = G * 1024;
-			
-			if (bytes > T) {
-				return (Math.round(bytes * 100 / T) / 100) + " TB";
-			} else if (bytes > G) {
-				return (Math.round(bytes * 100 / G) / 100) + " GB";
-			} else if (bytes > M) {
-				return (Math.round(bytes * 100 / M) / 100) + " MB";
-			} else if (bytes > K) {
-				return (Math.round(bytes * 100 / K) / 100) + " KB";
-			} else {
-				return bytes + " Bytes";
-			}
-		}
-		
-		function updateProgressBar(current, total) {
-			percent = Math.round((current * 100) / total) ;
-			document.querySelector('#upload_progress').style.width = percent + '%';
-		}
+                function humanSize(bytes) {
+                    const K = 1024;
+                    const M = K * 1024;
+                    const G = M * 1024;
+                    const T = G * 1024;
 
-		function handleSelectUrl(e) {
-			var target = document.querySelector('#appendedInputButton');
-			target.focus();
-			target.select();
-		}
-		document.querySelector('#select_all_btn').addEventListener('click', handleSelectUrl, false);
-		
-		function handleProgressInfo(e) {
-			if (e.lengthComputable) {
-				updateProgressBar(e.loaded, e.total);
-		    }
-		}
+                    if (bytes > T) {
+                        return (Math.round(bytes * 100 / T) / 100) + " TB";
+                    } else if (bytes > G) {
+                        return (Math.round(bytes * 100 / G) / 100) + " GB";
+                    } else if (bytes > M) {
+                        return (Math.round(bytes * 100 / M) / 100) + " MB";
+                    } else if (bytes > K) {
+                        return (Math.round(bytes * 100 / K) / 100) + " KB";
+                    } else {
+                        return bytes + " Bytes";
+                    }
+                }
 
-		function handleUploadedInfo(e) {
-			updateProgressBar(1, 1);
-			
-			var data = JSON.parse(this.responseText);
-			document.querySelector('#file_size_info').innerHTML = "File size: " + humanSize(data.uploadedSize);
-			document.querySelector('#appendedInputButton').value = data.downloadUrl;
-			$('#uploadModal').modal('hide');
-			$('#finishedModal').modal('show');
-			
-			var list = document.querySelector('#history_list').innerHTML;
-			list = '<li><span class="icon-download"><a class="history" href="' 
-				+ data.downloadUrl 
-				+ '">' 
-				+ data.downloadName 
-				+ '</a></span></li>' 
-				+ list
-				;
-			document.querySelector('#history_list').innerHTML = list;
-		}
+                function updateProgressBar(current, total) {
+                    percent = Math.round((current * 100) / total) ;
+                    document.querySelector('#upload_progress').style.width = percent + '%';
+                }
 
-		var xReq;
-		function handleStartUpload(e) {
-			e.preventDefault();
-			if (document.querySelector('#file_input').files.length <= 0) {
-				return;
-			}
-			
-			updateProgressBar(0, 1);
-			
-			xReq = new XMLHttpRequest();
-			xReq.upload.addEventListener('progress', handleProgressInfo, false)
-			xReq.addEventListener('load', handleUploadedInfo, false);
+                function handleSelectUrl(e) {
+                    var target = document.querySelector('#appendedInputButton');
+                    target.focus();
+                    target.select();
+                }
+                document.querySelector('#select_all_btn').addEventListener('click', handleSelectUrl, false);
 
-			upload_form = document.querySelector('#upload_form');
-			xReq.open("post", upload_form.action + "&ajax=true" , true);
-			xReq.send(new FormData(upload_form));
-			
-			$('#uploadModal').modal('show');
-		}
-		document.querySelector('#submit').addEventListener('click', handleStartUpload, false);
+                function handleProgressInfo(e) {
+                    if (e.lengthComputable) {
+                        updateProgressBar(e.loaded, e.total);
+                    }
+                }
 
-		function handleCancelUpload(e) {
-			if (xReq) {
-				xReq.abort();
-			}
-		}
-		document.querySelector('#cancel_upload_btn').addEventListener('click', handleCancelUpload, false);
-	}
-	window.addEventListener('load', initUploadComponent, false);
+                var files = Cookies.get('files') || "";
+                var flist = files.split(",");
+                function addToFileList(name) {
+                    flist.unshift(name);
+                    files = flist.join(",");
+                    Cookies.set('files', files);
+                }
+                
+                function updateFileList() {
+                    var list = "";
+                    for (var i = 0; i < flist.length; ++i) {
+                        var name = flist[i];
+                        if (!name) {
+                            continue;
+                        }
+                        
+                        var url = "/?dl=" + name;
+                        list = '<li><span class="icon-download"><a class="history" href="'
+                            + url
+                            + '">'
+                            + name
+                            + '</a></span></li>'
+                            + list
+                            ;
+                    }
+                    document.querySelector('#history_list').innerHTML = list;
+                }
+                updateFileList();
+                
+                function handleUploadedInfo(e) {
+                    updateProgressBar(1, 1);
+
+                    var data = JSON.parse(this.responseText);
+                    document.querySelector('#file_size_info').innerHTML = "File size: " + humanSize(data.uploadedSize);
+                    document.querySelector('#appendedInputButton').value = data.downloadUrl;
+                    $('#uploadModal').modal('hide');
+                    $('#finishedModal').modal('show');
+
+                    addToFileList(data.downloadName);
+                    updateFileList();
+                }
+
+                var xReq;
+                function handleStartUpload(e) {
+                    e.preventDefault();
+                    if (document.querySelector('#file_input').files.length <= 0) {
+                            return;
+                    }
+
+                    updateProgressBar(0, 1);
+
+                    xReq = new XMLHttpRequest();
+                    xReq.upload.addEventListener('progress', handleProgressInfo, false)
+                    xReq.addEventListener('load', handleUploadedInfo, false);
+
+                    upload_form = document.querySelector('#upload_form');
+                    xReq.open("post", upload_form.action + "&ajax=true" , true);
+                    xReq.send(new FormData(upload_form));
+
+                    $('#uploadModal').modal('show');
+                }
+                document.querySelector('#submit').addEventListener('click', handleStartUpload, false);
+
+                function handleCancelUpload(e) {
+                    if (xReq) {
+                        xReq.abort();
+                    }
+                }
+                document.querySelector('#cancel_upload_btn').addEventListener('click', handleCancelUpload, false);
+            }
+            window.addEventListener('load', initUploadComponent, false);
 	</script>
 </head>
 
@@ -149,9 +172,6 @@
 		<hr>
 		<h4>歷史紀錄</h4>
 		<ul id="history_list" class="unstyled">
-<?php foreach($this->histories as $data): ?>
-			<li><span class="icon-download"><a class="history" href="<?=$data[ 'url' ]?>"><?=$data[ 'file' ]?></a></span></li>
-<?php endforeach; ?>
 		</ul>
 	</div>
 	<footer class="text-center">

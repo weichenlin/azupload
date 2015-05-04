@@ -17,18 +17,13 @@ class AzUpload
         } elseif (isset($_GET['dl']) && !empty($_GET['dl'])) {
             $this->processDownloadFile($_GET['dl']);
         } else {
-            $fm = new FileManager();
-            $files = $fm->getFileList(10);
-            $histories = array();
-            foreach ($files as $file) {
-                $histories[] = array(
-                    'url' => $this->buildDownloadUrl($file),
-                    'file' => $file
-                );
-            }
-            $this->view->histories = $histories;
-            $this->view->render('main.tpl');
+            $this->displayIndexPage();
         }
+    }
+    
+    private function displayIndexPage()
+    {
+        $this->view->render('main.tpl');
     }
 
     private function processUploadFile($ajax = false)

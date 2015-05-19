@@ -101,12 +101,11 @@
                         }
                         
                         var url = "/?dl=" + name;
-                        list = '<li><span class="icon-download"><a class="history" href="'
+                        list += '<li><span class="icon-download"><a class="history" href="'
                             + url
                             + '">'
                             + name
                             + '</a></span></li>'
-                            + list
                             ;
                     }
                     document.querySelector('#history_list').innerHTML = list;

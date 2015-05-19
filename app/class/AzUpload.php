@@ -120,20 +120,13 @@ class FileManager
     public function sendFilecontent($saveName)
     {
         $file = FILE_STORE . $saveName;
-        if ($this->getFileSize($saveName) > 4096) {
-            $srcStream = fopen($file, 'rb');
-            $dstStream = fopen('php://output', 'wb');
+        $srcStream = fopen($file, 'rb');
+        $dstStream = fopen('php://output', 'wb');
 
-            $offset = 0;
-            while(!feof($srcStream)) {
-                $offset += stream_copy_to_stream($srcStream, $dstStream, 4096, $offset);
-            }
+        stream_copy_to_stream($srcStream, $dstStream);
 
-            fclose($dstStream);
-            fclose($srcStream);
-        } else {
-            readfile($file);
-        }
+        fclose($dstStream);
+        fclose($srcStream);
     }
 
     public function getFileSize($saveName)
